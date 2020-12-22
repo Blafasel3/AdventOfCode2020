@@ -61,7 +61,7 @@ class Day20Test {
             .split(Regex("\\s+\\n"))
             .map { tileAsString -> parseTile(tileAsString) }
 
-        val tile = tiles.first()!!
+        val tile = tiles.first()
         assertEquals(2311, tile.id)
         assertEquals(4, tile.borderLines.size)
         assertTrue(tile.borderLines.contains("..##.#..#."))
