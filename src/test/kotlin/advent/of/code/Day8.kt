@@ -16,18 +16,6 @@ class Day8 {
 
     @Test
     fun `day8 part2 break infinite loop`() {
-//        val testInput = """
-//            nop +0
-//            acc +1
-//            jmp +4
-//            acc +3
-//            jmp -3
-//            acc -99
-//            acc +1
-//            jmp -4
-//            acc +6
-//        """.trimIndent()
-
         val instructions = puzzleInput.lines().map {
             val split = it.split(" ".toRegex())
             Pair(split[0], split[1].toInt())

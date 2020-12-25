@@ -2,7 +2,7 @@ package advent.of.code.day19
 
 import org.junit.Test
 
-class Day19 {
+class Day19Test {
 
     @Test
     fun `part 1`() {
@@ -25,23 +25,73 @@ class Day19 {
         val rules = blocks.first().lines().sorted()
         println(rules)
         val letterRegex = "[0-9]+: \".+\"".toRegex()
-        val letterRules = rules.filter { letterRegex.matches(it) }
+        val knownRules = rules.filter { letterRegex.matches(it) }
             .map { it.split(": ") }
-            .groupBy({ it.first() }, { it.last().dropLast(1).drop(1) })
+            .groupBy({ it.first().toInt() }, { listOf(it.last().dropLast(1).drop(1)) })
             .toMutableMap()
-        val dynamicRules = rules.filter { !letterRegex.matches(it) }
-            .map { it.split(": ").last() }
-            .map { it.split(" | ") }
-            .map { valuePair -> valuePair.map { it.split(" ") } }
-        val map = dynamicRules.drop(1).forEach { rules ->
-            println(rules.map { rule ->
-                rule.mapNotNull { char ->
-                    letterRules[char]
-                }.flatten()
-            }.map { it.joinToString("") })
-        }
-        val values = blocks.last()
+        val dynamicRules = mutableMapOf<Int, List<List<String>>>()
+        rules.asSequence().filter { !letterRegex.matches(it) }
+            .drop(1)
+            .map {
+                val split = it.split(": ")
+                Pair(split.first().toInt(), split.last().split(" | ").map { valuePair -> valuePair.split(" ") })
+            }.forEach {
+                dynamicRules[it.first] = it.second
+            }
 
+        var steps = 0
+        while (knownRules.size < rules.size && steps < 2) {
+            steps++
+            val map = dynamicRules.filter {
+                it.value.flatten().all { ruleIndex ->
+                    knownRules.containsKey(ruleIndex.toInt())
+                }
+            }
+            val map1 = map.map { entry ->
+                val newMap = entry.value.map { list ->
+                    list.map { knownRules[it.toInt()] }
+                        .map { it!!.joinToString("") }
+                }
+                Pair(entry.key, newMap)
+            }
+
+            map1.forEach {
+                knownRules[it.first] = it.second
+                dynamicRules.remove(it.first)
+            }
+
+            println(knownRules)
+        }
+
+        val values = blocks.last().lines()
+
+    }
+
+    @Test
+    fun `part 1 second try`() {
+        val testInput = """
+            0: 4 1 5
+            1: 2 3 | 3 2
+            4: "a"
+            5: "b"
+            2: 4 4 | 5 5
+            3: 4 5 | 5 4
+
+            ababbb
+            bababa
+            abbbab
+            aaabbb
+            aaaabbb
+        """.trimIndent()
+
+        val blocks = testInput.split(Regex("\\s+\\n"))
+        val rules = blocks.first().lines().sorted()
+        println(rules)
+        val letterRegex = "[0-9]+: \".+\"".toRegex()
+        val knownRules = rules.filter { letterRegex.matches(it) }
+            .map { it.split(": ") }
+            .groupBy({ it.first().toInt() }, { listOf(it.last().dropLast(1).drop(1)) })
+            .toMutableMap()
     }
 
     private fun <S, T> List<S>.cartesianProduct(other: List<T>) = this.flatMap {
