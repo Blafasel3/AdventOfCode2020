@@ -25,16 +25,20 @@ class Day17Try2 {
         """.trimIndent()
         val resultTestInput = getActiveNodes(testInput)
         assertEquals(112, resultTestInput)
-        val resultPuzzleInput = getActiveNodes(puzzleInput)
-        assertEquals(306, resultPuzzleInput)
+//        val resultPuzzleInput = getActiveNodes(puzzleInput)
+//        assertEquals(306, resultPuzzleInput)
     }
 
     private fun getActiveNodes(input: String, bootCycleLength: Int = 6): Int {
         val rows = input.lines()
         val cubes = getInitialCubes(rows, bootCycleLength)
         for (z in 1..bootCycleLength) {
+            // TODO missing z = -1 plane for z = 0
             for (cube in cubes) {
-                val numberOfActiveNeighbours = cubes.filter { it.isDirectNeighbour(cube) && it.isActive }.count()
+                val numberOfActiveNeighbours = cubes.asSequence()
+                    .filter { it.isActive }
+                    .filter { it.isDirectNeighbour(cube) }
+                    .count()
                 if (numberOfActiveNeighbours !in 2..3) {
                     cube.isActive = false
                 } else if (numberOfActiveNeighbours == 3) {
@@ -61,11 +65,10 @@ class Day17Try2 {
         val initialPlaneCubes = cubes.filter { it.coordinates.z == 0 }
         for (rowIndex in rows.indices) {
             for (columnIndex in rows[0].indices) {
-                initialPlaneCubes.filter {
+                initialPlaneCubes.first {
                     bootCycleLength + rowIndex == it.coordinates.y
                             && bootCycleLength + columnIndex == it.coordinates.x
-                }
-                    .first().isActive =
+                }.isActive =
                     rows[rowIndex][columnIndex] == '#'
             }
         }

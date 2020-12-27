@@ -2,13 +2,15 @@ package advent.of.code.day17
 
 import kotlin.math.abs
 
-class ThreeDimensionalCoordinate(val x: Int, val y: Int, val z: Int) {
-
+open class ThreeDimensionalCoordinate(val x: Int, val y: Int, val z: Int) {
     fun isDirectNeighbor(other: ThreeDimensionalCoordinate): Boolean =
-        this != other && abs(other.x - this.x) <= 1 && abs(other.y - this.y) <= 1 && abs(other.z - other.z) <= 1
+        this != other
+                && abs(other.x - this.x) <= 1
+                && abs(other.y - this.y) <= 1
+                && abs(other.z - this.z) <= 1
 
     override fun toString(): String {
-        return "ThreeDimensionalCoordinate(x=$x, y=$y, z=$z)"
+        return "3-Dimensional(x=$x, y=$y, z=$z)"
     }
 
     override fun equals(other: Any?): Boolean {
@@ -16,11 +18,9 @@ class ThreeDimensionalCoordinate(val x: Int, val y: Int, val z: Int) {
         if (javaClass != other?.javaClass) return false
 
         other as ThreeDimensionalCoordinate
-
         if (x != other.x) return false
         if (y != other.y) return false
         if (z != other.z) return false
-
         return true
     }
 
