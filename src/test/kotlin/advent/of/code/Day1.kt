@@ -9,6 +9,7 @@ class Day1 {
         val cartesianProduct = input.cartesianProduct(input)
         val filter = cartesianProduct.first { (it.first + it.second) == 2020 }
 
+
         println(filter)
     }
 
