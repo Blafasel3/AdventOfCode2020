@@ -1,1 +1,4 @@
-/target/test-classes/*
+target
+org.eclipse.*
+.project
+.classpath
